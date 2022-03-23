@@ -2,7 +2,20 @@ cmake_minimum_required (VERSION 3.5)
 
 project (eis_utils)
 
-add_library (${PROJECT_NAME} STATIC src/eis_utils.c src/eis_coms.c src/eis_err.c)
+set(EIS_UTILS_H_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/inc/eis_coms.h
+    ${CMAKE_CURRENT_LIST_DIR}/inc/eis_err.h
+    ${CMAKE_CURRENT_LIST_DIR}/inc/eis_utils.h
+    )
+
+set(EIS_UTILS_C_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/src/eis_utils.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/eis_coms.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/eis_err.c)
+
+set(EIS_UTILS_LIBRARY ${PROJECT_NAME})
+
+add_library (${PROJECT_NAME} STATIC ${EIS_UTILS_C_FILES})
 add_library (aduc::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_include_directories (${PROJECT_NAME} PUBLIC inc)
 
@@ -25,3 +38,15 @@ if (ADUC_BUILD_UNIT_TESTS )
 
     add_subdirectory (tests)
 endif ()
+
+if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+    set(CMAKE_INSTALL_LIBDIR "lib")
+endif()
+
+install(FILES ${EIS_UTILS_H_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aduc)
+install(TARGETS ${EIS_UTILS_LIBRARY}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aduc
+)

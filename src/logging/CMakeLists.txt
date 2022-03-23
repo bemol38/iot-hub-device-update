@@ -9,6 +9,7 @@ target_include_directories (${PROJECT_NAME} INTERFACE inc)
 
 set (ADUC_LOGGING_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
+set(LOGGING_H_FILES ${CMAKE_CURRENT_LIST_DIR}/inc/aduc/logging.h )
 if (ADUC_LOGGING_LIBRARY STREQUAL "xlog")
     # xlogging requires the azure iot shared util library.
     find_package (azure_c_shared_utility REQUIRED)
@@ -18,6 +19,9 @@ elseif (ADUC_LOGGING_LIBRARY STREQUAL "zlog")
     add_subdirectory (zlog)
     target_link_libraries (${PROJECT_NAME} INTERFACE zlog)
     target_compile_definitions (${PROJECT_NAME} INTERFACE ADUC_USE_ZLOGGING=1)
+    set(LOGGING_H_FILES ${LOGGING_H_FILES} ${CMAKE_CURRENT_LIST_DIR}/zlog/inc/zlog.h)
 else ()
     message (FATAL_ERROR "Unknown logging library ${ADUC_LOGGING_LIBRARY} specified.")
 endif ()
+
+install(FILES ${LOGGING_H_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aduc)
